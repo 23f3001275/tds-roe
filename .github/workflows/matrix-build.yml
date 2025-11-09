@@ -1,0 +1,44 @@
+name: Multi-Platform Matrix Build with Artifacts
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build:
+    # 🔹 Matrix strategy with 3 Python versions (you can change to Node or OS)
+    strategy:
+      matrix:
+        python-version: ['3.9', '3.10', '3.11']
+
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Checkout the repository
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Step 2: Identifier step (required)
+      - name: matrix-0f7a82a
+        run: echo "Building for Python ${{ matrix.python-version }}"
+
+      # Step 3: Set up Python
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      # Step 4: Generate a unique build artifact
+      - name: Generate build artifact
+        run: |
+          echo "Build output for Python version ${{ matrix.python-version }}" > build_output.txt
+          echo "Timestamp: $(date)" >> build_output.txt
+          echo "Matrix ID: matrix-0f7a82a" >> build_output.txt
+
+      # Step 5: Upload artifact
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-0f7a82a-py${{ matrix.python-version }}
+          path: build_output.txt
